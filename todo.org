@@ -1,0 +1,14 @@
+
+standard:
+https://forth-standard.org/standard/foreword
+
+words:
+https://forth-standard.org/standard/words
+
+. to pop stack
+.S to show st
+
+
+* TODO Make dictionary dynamically allocated
+* TODO EMIT
+* TODO CR, SPACE, etc. in terms of EMIT

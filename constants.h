@@ -1,9 +1,14 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#define DATA_STACK_SIZE 16384
+#define DATA_STACK_SIZE 256
 #define MAX_RENDERABLE_ASCII 127
 #define MAX_WORD_LENGTH 32
 #define MAX_VARIABLE_NAME_LENGTH 32
+#define INPUT_BUFFER_SIZE 8192
+#define MAX_OUTPUT_BUFFER 8192
+#define DICTIONARY_CELLS 16384
+#define MAX_WORDS_IN_BUFFER 32 /* used when parsing words in input buffer */
+#define MEMORY_CELLS 512
 
 #endif /* CONTANTS_H */

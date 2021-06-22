@@ -1,6 +1,6 @@
 
 #include "math.h"
-#include "../stack.h"
+#include "stack.h"
 
 
 /* ( n1 n2 -- sum ) replaces top two stack elements with sum of top two stack elements. */

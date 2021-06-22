@@ -1,6 +1,6 @@
 
 #include "../typedefs.h"
-#include "../stack.h"
+#include "stack.h"
 
 /** Conditionals **/
 

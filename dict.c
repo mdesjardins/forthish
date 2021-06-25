@@ -10,49 +10,54 @@
 #include "vm.h"
 
 void dict_init() {
-  dict_prepend(word_build(".", pop));
-  dict_prepend(word_build(".s", show));
-  dict_prepend(word_build("emit", emit));
-  dict_prepend(word_build("+", add));
-  dict_prepend(word_build("-", subtract));
-  dict_prepend(word_build("=", equals));
+  dict_prepend(word_build(".", pop, false));
+  dict_prepend(word_build(".s", show, false));
+  dict_prepend(word_build("emit", emit, false));
+  dict_prepend(word_build("+", add, false));
+  dict_prepend(word_build("-", subtract, false));
+  dict_prepend(word_build("=", equals, false));
+  dict_prepend(word_build(":", define, false));
+  dict_prepend(word_build(";", stop_define, true));
 }
 
-word_node* word_build(const char* name, param_stack_elem (*pf)(void)) {
+word_node* word_build(const char* name, void (*pf)(void), bool precedence) {
   word_node* new_word = vm.cp;
-  new_word->precedence = false;
+  new_word->precedence = precedence;
   new_word->name = strndup(name, MAX_WORD_LENGTH);
   new_word->pf = pf;
-  vm.cp = vm.cp + sizeof(new_word);
   return new_word;
 }
 
+/*
+ * vm.cp - points to next open spot
+ * vm.dict_head - points to "top" of last word.
+ * node.next - points to top of next word.
+ */
 void dict_prepend(word_node* node) {
-  node->next = vm.dict;
-  vm.dict = node;
+  /* TODO need a bounds check w/ dict_end */
+  /* TODO sizeof won't work when word sizes vary */
+  node = (word_node *)memcpy(vm.cp, node, sizeof(word_node));
+
+  /* First word in, next needs to be null */
+  if (vm.cp == vm.dict) {
+    node->next = NULL;
+  } else {
+    node->next = vm.dict_head;
+  }
+  vm.dict_head = node;
+
+  /* TODO sizeof won't work when word sizes vary */
+  vm.cp = vm.dict_head + sizeof(node);
 }
 
 /* this itself should be a word */
 word_node* dict_find(const char* name) {
-  word_node* current = vm.dict;
-  while (current != NULL && current <= vm.cp) {
+  word_node* current = vm.dict_head;  /* top of last word */
+  while (current >= vm.dict) {
     if (strncmp(name, current->name, MAX_WORD_LENGTH) == 0) {
       return current;
     }
     current = current->next;
   }
   return NULL;
-}
-
-interp_result interpret(const char* name) {
-  word_node* word = dict_find(name);
-  if (word) {
-    /* maybe compile here? no, can't because don't have all words. */
-    word->pf();
-    return OK;
-  }
-
-  /* error */
-  fprintf(stderr, "%s?", name);
-  return ABORT; /* ?? */
 }

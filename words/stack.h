@@ -4,8 +4,8 @@
 #include "../typedefs.h"
 
 /* stack manipulation */
-param_stack_elem show(void);
-param_stack_elem pop(void);
-void push(cell);
+void show(void);
+void pop(void);
+
 
 #endif /* STACK_MANIP_H */

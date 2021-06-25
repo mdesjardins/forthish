@@ -1,6 +1,11 @@
 
 #include "../typedefs.h"
+#include "../vm.h"
 
-compile_result compile(void) {
-  return false;
+void define(void) {
+  vm.flags.compiling = 1;
+}
+
+void stop_define(void) {
+  vm.flags.compiling = 0;
 }

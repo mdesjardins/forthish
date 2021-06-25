@@ -3,6 +3,7 @@
 
 #include "../typedefs.h"
 
-compile_result compile(const char* words);
+void define(void);
+void stop_define(void);
 
 #endif /* COMPILE_H */

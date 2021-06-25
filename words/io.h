@@ -3,6 +3,6 @@
 
 #include "../typedefs.h"
 
-param_stack_elem emit(void);
+void emit(void);
 
 #endif /* IO_H */

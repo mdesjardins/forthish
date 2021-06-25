@@ -10,13 +10,12 @@
 #include "constants.h"
 #include "words/stack.h"
 
-mode current_mode = INTERPRET;
-
 bool is_number(char* input) {
   int i = 0;
   if (input[0] == '\0') {
     return false;
   }
+
   while (!iscntrl(input[i])) {
     if (!isdigit(input[i])) {
       return false;
@@ -42,32 +41,59 @@ void tokenize(char words[][MAX_WORD_LENGTH]) {
   //todo multiple spaces?
 }
 
+/* Executes a single word */
+void execute(char *token) {
+  word_node* word = dict_find(token);
+  if (word) {
+    word->pf();
+  } else if (is_number(token)) {
+    /* this needs more work, we need to invoke number word, handle doubles */
+    data_push(atoi(token));
+  } else {
+    fprintf(stderr, "%s? ", token);
+  }
+}
+
+/* Compiles a new definition */
+void compile(char tokens[][MAX_WORD_LENGTH]) {
+  char* name = tokens[0];
+  int i = 1;
+  do {
+    char* token = tokens[i];
+    word_node* word = dict_find(token);
+    fprintf(stderr, "word: %s\n", token);
+    if (word) {
+      if (word->precedence) {
+        word->pf();
+      } else {
+        fprintf(stderr, "add to the definition: %s\n", token);
+      }
+    } else if (is_number(token)) {
+      /* need to push a literal onto the function list */
+    } else {
+      fprintf(stderr, "%s? ", token);
+    }
+
+    fprintf(stderr, "compile: %s\n", token);
+    i++;
+  } while(tokens[i][0] != 0);
+}
+
 void process() {
   vm.input_buf[strcspn(vm.input_buf, "\r\n")] = 0;  /* chomp carriage returns */
-  char words[MAX_WORDS_IN_BUFFER][MAX_WORD_LENGTH];
+  char tokens[MAX_WORDS_IN_BUFFER][MAX_WORD_LENGTH];
 
-  tokenize(words);
+  tokenize(tokens);
 
   int i = 0;
   do {
-    /* this needs more work, we need to invoke number word, handle doubles */
-    if (current_mode == INTERPRET) {
-      /* TODO fix backward order here */
-      if (is_number(words[i])) {
-        push(atoi(words[i]));
-      } else {
-        /* need to handle lookahead for things like VARIABLE */
-        interp_result result = interpret(words[i]);
-        if (result == COMPILE_MODE) {
-          current_mode = COMPILE;
-        }
-      }
+    if (!vm.flags.compiling) {
+      execute(tokens[i]);
     } else {
-      //      compile(words)
-      fputs("compile.\n", stdout);
+      compile(&tokens[i]);
     }
     i++;
-  } while(words[i][0] != 0);
+  } while(tokens[i][0] != 0);
 }
 
 /* Main REPL/Input loop */

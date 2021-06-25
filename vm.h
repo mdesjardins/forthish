@@ -5,22 +5,31 @@
 #include "typedefs.h"
 #include "dict.h"
 
-/* TODO alignment */
+typedef struct vm_flags_t {
+  unsigned int compiling : 1;
+} vm_flags_t;
+
+/* TODO alignment - make arrays instead of heap alloc in vm.c? */
 typedef struct vm_t {
-    char* input_buf;
-    word_node* dict;
-    word_node* dict_start;
-    word_node* dict_end;
-    word_node* cp; /* next dictionary entry */
+    vm_flags_t flags;
+    char input_buf[INPUT_BUFFER_SIZE];
+    word_node dict[DICTIONARY_CELLS];
+    word_node* cp;        /* next spot for a word */
+    word_node* dict_buf_end;  /* end of word buffer */
+    word_node* dict_head; /* last dictionary entry */
+    cell data_stack[DATA_STACK_SIZE];
     cell* sp; /* stack pointer */
-    cell* data_stack;
     cell* data_stack_start;  /* to check for underflows */
     cell* data_stack_end;    /* to check for overflows */
-    cell* memory; /* general memory buffers, may not need. */
+    cell memory[MEMORY_CELLS]; /* general memory buffers, may not need. */
 } vm_t;
 
 extern vm_t vm;
 
 void vm_init();
+
+/* not sure this really belongs here, but whatev... stack push/pop */
+void data_push(cell i);
+cell data_pop();
 
 #endif /* VM_H */

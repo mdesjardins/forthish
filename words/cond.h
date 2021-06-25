@@ -4,6 +4,6 @@
 #include "../typedefs.h"
 
 /* ( n1 n2 -- flag ) replaces top to stack elements with -1 (equal) or 0 (not equal) */
-param_stack_elem equals(void);
+void equals(void);
 
 #endif /* COND_H */

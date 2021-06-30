@@ -8,6 +8,7 @@
 #include "dict.h"
 #include "typedefs.h"
 #include "constants.h"
+#include "tib.h"
 #include "words/stack.h"
 
 bool is_number(char* input) {
@@ -25,24 +26,8 @@ bool is_number(char* input) {
   return true;
 }
 
-/* Mutates words! */
-void tokenize(char words[][MAX_WORD_LENGTH]) {
-  memset(words, 0, MAX_WORDS_IN_BUFFER*MAX_WORD_LENGTH);
-  int i = 0;
-
-  const char* delim = " ";
-  char* next_token;
-  char* token = strtok_r(vm.input_buf, delim, &next_token);
-  while (token) {
-    strncpy(words[i], token, MAX_WORD_LENGTH);
-    token = strtok_r(NULL, delim, &next_token);
-    i++;
-  }
-  //todo multiple spaces?
-}
-
 /* Executes a single word */
-void execute(char *token) {
+void process(char *token) {
   word_node* word = dict_find(token);
   if (word) {
     word->pf();
@@ -57,9 +42,13 @@ void execute(char *token) {
 /* Compiles a new definition */
 void compile(char tokens[][MAX_WORD_LENGTH]) {
   char* name = tokens[0];
+
+  /* allot? */
+
   int i = 1;
   do {
     char* token = tokens[i];
+    vm.in = token;
     word_node* word = dict_find(token);
     fprintf(stderr, "word: %s\n", token);
     if (word) {
@@ -72,6 +61,7 @@ void compile(char tokens[][MAX_WORD_LENGTH]) {
       /* need to push a literal onto the function list */
     } else {
       fprintf(stderr, "%s? ", token);
+      vm.flags.compiling = 0;  /* move somewhere else */
     }
 
     fprintf(stderr, "compile: %s\n", token);
@@ -79,21 +69,20 @@ void compile(char tokens[][MAX_WORD_LENGTH]) {
   } while(tokens[i][0] != 0);
 }
 
-void process() {
-  vm.input_buf[strcspn(vm.input_buf, "\r\n")] = 0;  /* chomp carriage returns */
-  char tokens[MAX_WORDS_IN_BUFFER][MAX_WORD_LENGTH];
+void interpret() {
+  vm.tib[strcspn(vm.tib, "\r\n")] = 0;  /* chomp carriage returns (should probably deal w/ elsewhere) */
 
-  tokenize(tokens);
-
+  char token[MAX_WORD_LENGTH];
   int i = 0;
-  do {
+  while (next_token(token)) {
+    //vm.in = tokens[i];
     if (!vm.flags.compiling) {
-      execute(tokens[i]);
+      process(token);
     } else {
-      compile(&tokens[i]);
+      compile(&token);
     }
     i++;
-  } while(tokens[i][0] != 0);
+  } // while(tokens[i][0] != 0);
 }
 
 /* Main REPL/Input loop */
@@ -105,8 +94,9 @@ int main() {
 
   while (loop) {
     fputs("> ", stdout);
-    fgets(vm.input_buf, INPUT_BUFFER_SIZE, stdin);
-    process();
+    fgets(vm.tib, INPUT_BUFFER_SIZE, stdin);
+    interpret();
+    reset_tib();
     fputs("ok.\n", stdout);
   }
 }

@@ -3,9 +3,8 @@
 #include <stdbool.h>
 #include "stdint.h"
 
-/* We have 32 bit cells, which is a bit unconventional I guess. */
-typedef int32_t cell;
-typedef int64_t double_cell;
+typedef int16_t cell;
+typedef int32_t double_cell;
 typedef cell param_stack_elem;
 typedef cell return_stack_elem;
 
@@ -22,5 +21,7 @@ typedef enum {
 } interp_result;
 
 typedef bool compile_result;
+
+typedef void (*word)(void);
 
 #endif /* TYPEDEFS_H */

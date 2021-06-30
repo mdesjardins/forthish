@@ -12,7 +12,8 @@ typedef struct vm_flags_t {
 /* TODO alignment - make arrays instead of heap alloc in vm.c? */
 typedef struct vm_t {
     vm_flags_t flags;
-    char input_buf[INPUT_BUFFER_SIZE];
+    char tib[INPUT_BUFFER_SIZE]; /* text input buffer */
+    char* in; /* pointer to current position in input stream >IN */
     word_node dict[DICTIONARY_CELLS];
     word_node* cp;        /* next spot for a word */
     word_node* dict_buf_end;  /* end of word buffer */

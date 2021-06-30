@@ -9,3 +9,7 @@ void define(void) {
 void stop_define(void) {
   vm.flags.compiling = 0;
 }
+
+void create(void) {
+  
+}

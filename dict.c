@@ -50,7 +50,7 @@ void dict_prepend(word_node* node) {
   vm.cp = vm.dict_head + sizeof(node);
 }
 
-/* this itself should be a word */
+/* this itself could be a word if we didn't worry about passing params? */
 word_node* dict_find(const char* name) {
   word_node* current = vm.dict_head;  /* top of last word */
   while (current >= vm.dict) {
@@ -61,3 +61,4 @@ word_node* dict_find(const char* name) {
   }
   return NULL;
 }
+

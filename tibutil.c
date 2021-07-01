@@ -3,13 +3,14 @@
 #include <ctype.h>
 #include "constants.h"
 #include "vm.h"
-#include "tib.h"
+#include "tibutil.h"
 
 void reset_tib() {
   memset(vm.tib, 0, INPUT_BUFFER_SIZE);
   vm.in = vm.tib;
 }
 
+/* Needs a little work - adjacent delimiters, overflow? */
 int next_token(char* dest) {
   int n = MAX_WORD_LENGTH - 1;
   char c;

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "dict.h"
+#include "dictutil.h"
 #include "words.h"
 #include "constants.h"
 #include "typedefs.h"
@@ -18,6 +18,8 @@ void dict_init() {
   dict_prepend(word_build("=", equals, false));
   dict_prepend(word_build(":", define, false));
   dict_prepend(word_build(";", stop_define, true));
+  dict_prepend(word_build("'", tick, false));
+  dict_prepend(word_build("execute", execute, false));
 }
 
 word_node* word_build(const char* name, void (*pf)(void), bool precedence) {
@@ -62,3 +64,9 @@ word_node* dict_find(const char* name) {
   return NULL;
 }
 
+/* Generates an execution token (xt) for a dict entry. In our implementation,
+   the xt is an offset from the start of the dictionary to the start of our
+   word definition */
+cell dict_xt_for(word_node* node) {
+  return (cell)(node - vm.dict);
+}

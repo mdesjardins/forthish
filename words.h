@@ -7,6 +7,8 @@
 #include "words/math.h"
 #include "words/stack.h"
 #include "words/cond.h"
-#include "words/compile.h"
+#include "words/define.h"
+#include "words/dict.h"
+#include "words/sys.h"
 
 #endif /* WORDS_H */

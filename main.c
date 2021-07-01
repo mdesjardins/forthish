@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vm.h"
-#include "dict.h"
+#include "dictutil.h"
 #include "typedefs.h"
 #include "constants.h"
-#include "tib.h"
+#include "tibutil.h"
 #include "words/stack.h"
 
 bool is_number(char* input) {

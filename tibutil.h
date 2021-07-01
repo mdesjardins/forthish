@@ -1,5 +1,5 @@
-#ifndef TIB_H
-#define TIB_H
+#ifndef TIBUTIL_H
+#define TIBUTIL_H
 
 #include "constants.h"
 
@@ -7,4 +7,4 @@
 int next_token(char* dest);
 void reset_tib(void);
 
-#endif /* TIB_H */
+#endif /* TIBUTIL_H */

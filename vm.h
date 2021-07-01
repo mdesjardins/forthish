@@ -3,7 +3,7 @@
 
 #include "constants.h"
 #include "typedefs.h"
-#include "dict.h"
+#include "dictutil.h"
 
 typedef struct vm_flags_t {
   unsigned int compiling : 1;

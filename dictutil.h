@@ -1,5 +1,5 @@
-#ifndef DICT_H
-#define DICT_H
+#ifndef DICTUTIL_H
+#define DICTUTIL_H
 
 #include <stdbool.h>
 #include "typedefs.h"
@@ -22,5 +22,6 @@ void dict_init();
 void dict_prepend(word_node* node);
 int dict_word_count();
 word_node* dict_find(const char* name);
+cell dict_xt_for(word_node* node);
 
-#endif /* DICT_H */
+#endif /* DICTUTIL_H */

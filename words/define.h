@@ -3,7 +3,7 @@
 
 #include "../typedefs.h"
 
-void define(void);
-void stop_define(void);
+void compile(void);
+void stop_compile(void);
 
 #endif /* COMPILE_H */

@@ -16,8 +16,8 @@ void dict_init() {
   dict_prepend(word_build("+", add, false));
   dict_prepend(word_build("-", subtract, false));
   dict_prepend(word_build("=", equals, false));
-  dict_prepend(word_build(":", define, false));
-  dict_prepend(word_build(";", stop_define, true));
+  dict_prepend(word_build(":", compile, false));
+  dict_prepend(word_build(";", stop_compile, true));
   dict_prepend(word_build("'", tick, false));
   dict_prepend(word_build("execute", execute, false));
 }

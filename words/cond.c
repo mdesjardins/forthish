@@ -1,6 +1,6 @@
 
 #include "../typedefs.h"
-#include "../vm.h"
+#include "../core.h"
 
 /* ( n1 n2 -- flag ) replaces top to stack elements with -1 (equal) or 0 (not equal) */
 void equals(void) {

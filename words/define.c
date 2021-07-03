@@ -3,26 +3,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "../typedefs.h"
-#include "../vm.h"
-#include "../tibutil.h"
+#include "../core.h"
 #include "../constants.h"
-#include "../dictutil.h"
 
-/* todo fix */
-bool is_num(char* input) {
-  int i = 0;
-  if (input[0] == '\0') {
-    return false;
-  }
-
-  while (!iscntrl(input[i])) {
-    if (!isdigit(input[i])) {
-      return false;
-    }
-    i++;
-  }
-  return true;
-}
 
 void stop_compile(void) {
   vm.flags.compiling = 0;

@@ -1,9 +1,37 @@
-#ifndef VM_H
-#define VM_H
+#ifndef CORE_H
+#define CORE_H
 
+#include <stdbool.h>
 #include "constants.h"
 #include "typedefs.h"
-#include "dictutil.h"
+
+/* Word things */
+
+/* Our dictionary is a linked list of word nodes, probably should align. */
+typedef struct word_node {
+    bool precedence;
+    const char* name;
+    void (*pf)(void);
+    struct word_node* next;
+} word_node;
+
+word_node* word_build(const char* name, void (*pf)(void), bool precedence);
+
+/* Dictionary things */
+
+void dict_init();
+void dict_prepend(word_node* node);
+int dict_word_count();
+word_node* dict_find(const char* name);
+cell dict_xt_for(word_node* node);
+
+/* TIB Things */
+
+int next_token(char* dest);
+void reset_tib(void);
+
+
+/* VM/Context Things */
 
 typedef struct vm_flags_t {
   unsigned int compiling : 1;
@@ -29,8 +57,13 @@ extern vm_t vm;
 
 void vm_init();
 
-/* not sure this really belongs here, but whatev... stack push/pop */
+/* Stack Things */
+
 void data_push(cell i);
 cell data_pop();
 
-#endif /* VM_H */
+/* Misc Things */
+
+bool is_num(char* input);
+
+#endif /* CORE_H */

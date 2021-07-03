@@ -4,12 +4,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include "vm.h"
-#include "dictutil.h"
+#include "core.h"
 #include "typedefs.h"
 #include "constants.h"
-#include "tibutil.h"
-#include "words/stack.h"
 
 bool is_number(char* input) {
   int i = 0;
@@ -43,16 +40,9 @@ void interpret() {
   vm.tib[strcspn(vm.tib, "\r\n")] = 0;  /* chomp carriage returns (should probably deal w/ elsewhere) */
 
   char token[MAX_WORD_LENGTH];
-  int i = 0;
   while (next_token(token)) {
-    //vm.in = tokens[i];
-    //if (!vm.flags.compiling) {
-      process(token);
-      //} else {
-      //compile(&token);
-      //}
-    i++;
-  } // while(tokens[i][0] != 0);
+    process(token);
+  }
 }
 
 /* Main REPL/Input loop */

@@ -3,11 +3,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "dictutil.h"
+#include <ctype.h>
+#include "core.h"
 #include "words.h"
 #include "constants.h"
 #include "typedefs.h"
-#include "vm.h"
+
+
+/************** Dictionary ***************/
+
 
 void dict_init() {
   dict_prepend(word_build(".", pop, false));
@@ -70,3 +74,93 @@ word_node* dict_find(const char* name) {
 cell dict_xt_for(word_node* node) {
   return (cell)(node - vm.dict);
 }
+
+
+/************** TIB ***************/
+
+void reset_tib() {
+  memset(vm.tib, 0, INPUT_BUFFER_SIZE);
+  vm.in = vm.tib;
+}
+
+/* Needs a little work - adjacent delimiters, overflow? */
+int next_token(char* dest) {
+  int n = MAX_WORD_LENGTH - 1;
+  char c;
+  if (*vm.in == '\0') {
+    return 0;
+  }
+  while (n--) {
+    c = *vm.in++;
+    if (isspace(c)) {
+      break;
+    }
+    *dest++ = c;
+  }
+  *dest++ = '\0';
+  return n;
+}
+
+
+/************** VM/Context ****************/
+
+vm_t vm;
+
+void vm_init() {
+  vm.flags.compiling = 0;
+  vm.in = vm.tib;
+
+  /* dictionary */
+  vm.cp = vm.dict_head = vm.dict;
+  vm.dict_buf_end = vm.dict + DICTIONARY_CELLS;
+
+  /* data stack */
+  vm.sp = vm.data_stack;
+  vm.data_stack_start = vm.data_stack;
+  vm.data_stack_end = vm.data_stack + DATA_STACK_SIZE;
+
+  /* todo - memset to 0? */
+}
+
+
+/************** Stack ********************/
+
+/* maybe these could be macros? or use inline? */
+
+void data_push(cell i) {
+  if (vm.sp >= vm.data_stack_end) {
+    fprintf(stderr, "Stack overflow.\n");
+  }
+  *vm.sp = i;
+  vm.sp++;
+  return;
+}
+
+cell data_pop() {
+  if (vm.sp <= vm.data_stack_start) {
+    fprintf(stderr, "Stack underflow.\n");
+  }
+  vm.sp--;
+  return *vm.sp;
+}
+
+/************** Misc. Utils ***************/
+
+
+/* todo fix */
+bool is_num(char* input) {
+  int i = 0;
+  if (input[0] == '\0') {
+    return false;
+  }
+
+  while (!iscntrl(input[i])) {
+    if (!isdigit(input[i])) {
+      return false;
+    }
+    i++;
+  }
+  return true;
+}
+
+

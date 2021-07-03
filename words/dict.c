@@ -1,9 +1,7 @@
 
 #include "../typedefs.h"
 #include "../constants.h"
-#include "../dictutil.h"
-#include "../tibutil.h"
-#include "../vm.h"
+#include "../core.h"
 #include "dict.h"
 
 void tick(void) {

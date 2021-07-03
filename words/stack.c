@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 #include "../typedefs.h"
-#include "../vm.h"
+#include "../core.h"
 
 /*
  * should probably look more like this:

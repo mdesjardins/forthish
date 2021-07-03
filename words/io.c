@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "../constants.h"
-#include "../vm.h"
+#include "../core.h"
 #include "io.h"
 
 /* ( x -- ) displays top of stack as ASCII */

@@ -4,7 +4,7 @@ RM=rm -f
 CFLAGS=-g
 LDFLAGS=-g
 LDLIBS=
-SRCS=main.c dictutil.c vm.c tibutil.c words/io.c words/math.c words/stack.c words/cond.c words/define.c words/sys.c words/dict.c
+SRCS=main.c core.c words/io.c words/math.c words/stack.c words/cond.c words/define.c words/sys.c words/dict.c
 OBJS=$(subst .c,.o,$(SRCS))
 TARGET=forthish
 

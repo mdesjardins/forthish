@@ -1,7 +1,7 @@
 
 #include "math.h"
 #include "stack.h"
-#include "../vm.h"
+#include "../core.h"
 
 /* ( n1 n2 -- sum ) replaces top two stack elements with sum of top two stack elements. */
 void add(void) {

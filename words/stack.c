@@ -19,3 +19,9 @@ void show(void) {
 void pop(void) {
   data_pop();
 }
+
+void dup(void) {
+  cell top = data_pop();
+  data_push(top);
+  data_push(top);
+}

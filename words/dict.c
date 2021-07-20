@@ -1,5 +1,6 @@
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "../typedefs.h"
 #include "../constants.h"
 #include "../core.h"
@@ -25,7 +26,8 @@ void execute(void) {
 
 void allot(void) {
   cell bytes = data_pop();
-  vm.cp += bytes;
+  fprintf(stderr, "POP! %d\n", bytes);
+  (char *)vm.cp += bytes;
 }
 
 
@@ -41,7 +43,7 @@ void allot(void) {
     a. check the return stack depth
     b. if there's anything there, push the XT onto the stack and execute it. Else, invoke QUIT.
   2. Implement QUIT
-    a. print OK basically... quit is basically "back to the loop"
+    a. print OK basically... quit is basically "back to the loop".
 
   If we wrote QUIT in forth it'd be
   : QUIT  BEGIN
@@ -64,19 +66,26 @@ void allot(void) {
  * need to be executed. Those words themselves may invoke other words, so we need to push
  * those onto the stack as well.
  */
+
+/*
+ * new problem: ALLOT doesn't work because it increases the size of the dict by an entire
+ * word_node instead of by one cell. :/ the vm.cp pointer needs to be a pointer to a cell, 
+ * not a pointer to a word_node. Otherwise the ALLOT in define.c won't work.
+ */
+
+
 void run(void) {
   /* pop the XT, that's us */
   cell xt = (cell)return_pop();
   word_node* word = (word_node *)(vm.dict + xt);
   cell* ip = word->data;
   while (ip++ != NULL) {
-    return_push(*ip); /* these two instructions are basically the R@ word */
+    /*    return_push(*ip); these two instructions are basically the R@ word */
     data_push(*ip);
     execute();
   }
 }
 
-void exit(void) {
-  cell xt = (cell)return_pop();
-  
+void __exit(void) {
+  /*  cell xt = (cell)return_pop(); */
 }

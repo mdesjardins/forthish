@@ -16,6 +16,7 @@
 void dict_init() {
   dict_prepend(word_build(".", pop, false));
   dict_prepend(word_build(".s", show, false));
+  dict_prepend(word_build("dup", dup, false));
   dict_prepend(word_build("emit", emit, false));
   dict_prepend(word_build("+", add, false));
   dict_prepend(word_build("-", subtract, false));
@@ -25,6 +26,7 @@ void dict_init() {
   dict_prepend(word_build("'", tick, false));
   dict_prepend(word_build("execute", execute, false));
   dict_prepend(word_build("run", run, false));
+  dict_prepend(word_build("exit", __exit, false));
 }
 
 word_node* word_build(const char* name, void (*code)(void), bool precedence) {

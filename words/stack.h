@@ -1,11 +1,10 @@
-#ifndef STACK_MANIP_H
-#define STACK_MANIP_H
+#ifndef STACK_H
+#define STACK_H
 
 #include "../typedefs.h"
 
-/* stack manipulation */
 void show(void);
 void pop(void);
+void dup(void);
 
-
-#endif /* STACK_MANIP_H */
+#endif /* STACK_H */

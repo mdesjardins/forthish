@@ -27,7 +27,9 @@ bool is_number(char* input) {
 void process(char *token) {
   word_node* word = dict_find(token);
   if (word) {
-    word->pf();
+    return_push(dict_xt_for(word));
+    word->code();
+    // return_pop(); make sure return stack is empty?
   } else if (is_number(token)) {
     /* this needs more work, we need to invoke number word, handle doubles */
     data_push(atoi(token));

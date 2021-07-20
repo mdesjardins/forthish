@@ -24,4 +24,17 @@ typedef bool compile_result;
 
 typedef void (*word)(void);
 
+/* Our dictionary is a linked list of word nodes, probably should align. */
+typedef struct word_node_flags_t {
+    unsigned int precedence : 1;
+} word_node_flags_t;
+
+typedef struct word_node {
+    word_node_flags_t flags;
+    const char* name;
+    void (*code)(void);
+    struct word_node* link;
+    cell* data;
+} word_node;
+
 #endif /* TYPEDEFS_H */

@@ -5,7 +5,7 @@
 #include "../typedefs.h"
 #include "../core.h"
 #include "../constants.h"
-
+#include "../words.h"
 
 void stop_compile(void) {
   vm.flags.compiling = 0;
@@ -21,22 +21,29 @@ void compile(void) {
   }
   fprintf(stderr, "compiling word: %s\n", name);
 
-  /* allot? */
+  /* invoke create instead? */
+  word_node* new_word = word_build(name, NULL, false);
+  new_word->code = run;
 
-  int i = 1;
   char token[MAX_WORD_LENGTH];
+  cell* ip = new_word->data;
   while (next_token(token) && vm.flags.compiling) {
-    fprintf(stderr, "loop.\n");
     if (token[0] != '\0') {
-      fprintf(stderr, " token: %s\n", token);
       word_node* word = dict_find(token);
       if (word) {
-        fprintf(stderr, "  found: %s\n", token);
-        if (word->precedence) {
-          fprintf(stderr, "    executing due to precendence: %s\n", token);
-          word->pf();
+        if (word->flags.precedence) {
+          word->code();
         } else {
-          fprintf(stderr, "    add to the definition: %s\n", token);
+          // 1. create a dictionary entry with name
+          // 2. add the pointer-to-function for... new "run" core fcn?
+          // 3. add invoked function to data section.
+          // this is sorta gonna depend on whether we're defining a word, variable, or constant.
+          data_push(sizeof(cell));
+          allot();
+          cell xt = dict_xt_for(word);
+          *ip = xt;         /* add XT to the data section */
+          ip++;             /* increment instruction pointer */
+          fprintf(stderr, "    added to the definition: %s\n", token);
         }
       } else if (is_num(token)) {
         /* need to push a literal onto the function list */
@@ -45,8 +52,13 @@ void compile(void) {
         vm.flags.compiling = 0;  /* move somewhere else */
       }
     }
-    fprintf(stderr, "end loop.\n");
   }
+
+  /* Add one last "xt" (NULL) that indicates we're at the end for now. */
+  data_push(sizeof(cell));
+  allot();
+  new_word->data = NULL;
+  dict_prepend(new_word);
 
   vm.flags.compiling = 0;
 }

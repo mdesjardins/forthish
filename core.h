@@ -7,13 +7,6 @@
 
 /* Word things */
 
-/* Our dictionary is a linked list of word nodes, probably should align. */
-typedef struct word_node {
-    bool precedence;
-    const char* name;
-    void (*pf)(void);
-    struct word_node* next;
-} word_node;
 
 word_node* word_build(const char* name, void (*pf)(void), bool precedence);
 
@@ -24,6 +17,7 @@ void dict_prepend(word_node* node);
 int dict_word_count();
 word_node* dict_find(const char* name);
 cell dict_xt_for(word_node* node);
+//void run(word_node* word);
 
 /* TIB Things */
 
@@ -50,6 +44,10 @@ typedef struct vm_t {
     cell* sp; /* stack pointer */
     cell* data_stack_start;  /* to check for underflows */
     cell* data_stack_end;    /* to check for overflows */
+    cell return_stack[RETURN_STACK_SIZE];
+    cell* rsp;
+    cell* return_stack_start;
+    cell* return_stack_end;
     cell memory[MEMORY_CELLS]; /* general memory buffers, may not need. */
 } vm_t;
 
@@ -61,6 +59,8 @@ void vm_init();
 
 void data_push(cell i);
 cell data_pop();
+void return_push(cell i);
+cell return_pop();
 
 /* Misc Things */
 

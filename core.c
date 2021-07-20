@@ -24,13 +24,15 @@ void dict_init() {
   dict_prepend(word_build(";", stop_compile, true));
   dict_prepend(word_build("'", tick, false));
   dict_prepend(word_build("execute", execute, false));
+  dict_prepend(word_build("run", run, false));
 }
 
-word_node* word_build(const char* name, void (*pf)(void), bool precedence) {
+word_node* word_build(const char* name, void (*code)(void), bool precedence) {
   word_node* new_word = vm.cp;
-  new_word->precedence = precedence;
+  new_word->flags.precedence = precedence;
   new_word->name = strndup(name, MAX_WORD_LENGTH);
-  new_word->pf = pf;
+  new_word->code = code;
+  new_word->data = NULL;
   return new_word;
 }
 
@@ -46,9 +48,9 @@ void dict_prepend(word_node* node) {
 
   /* First word in, next needs to be null */
   if (vm.cp == vm.dict) {
-    node->next = NULL;
+    node->link = NULL;
   } else {
-    node->next = vm.dict_head;
+    node->link = vm.dict_head;
   }
   vm.dict_head = node;
 
@@ -63,7 +65,7 @@ word_node* dict_find(const char* name) {
     if (strncmp(name, current->name, MAX_WORD_LENGTH) == 0) {
       return current;
     }
-    current = current->next;
+    current = current->link;
   }
   return NULL;
 }
@@ -74,6 +76,29 @@ word_node* dict_find(const char* name) {
 cell dict_xt_for(word_node* node) {
   return (cell)(node - vm.dict);
 }
+
+
+/* Given a word node, executes all the xts in its data params */
+  /* argh this can't take an argument! */
+#if 0
+void run(word_node* word) {
+  cell* ip = word->data;
+  while (ip++ != NULL) {
+    data_push(*ip);
+    execute();
+  }
+}
+#endif
+
+
+
+/*
+OK - so the way libforth does this is that it pushes the pointer to the
+next data "thing" onto the return stack, jumps into that code and runs it,
+and when it reaches EXIT it pops that off the return stack and jumps
+to that. Need to think a bit about this... I don't have an "instruction
+pointer" per se... and I don't have an EXIT instruction.
+*/
 
 
 /************** TIB ***************/
@@ -119,13 +144,18 @@ void vm_init() {
   vm.data_stack_start = vm.data_stack;
   vm.data_stack_end = vm.data_stack + DATA_STACK_SIZE;
 
+  /* return stack */
+  vm.rsp = vm.return_stack;
+  vm.return_stack_start = vm.return_stack;
+  vm.return_stack_end = vm.return_stack + DATA_STACK_SIZE;
+
   /* todo - memset to 0? */
 }
 
 
 /************** Stack ********************/
 
-/* maybe these could be macros? or use inline? */
+/* maybe these could be macros? maybe DRY up? */
 
 void data_push(cell i) {
   if (vm.sp >= vm.data_stack_end) {
@@ -142,6 +172,23 @@ cell data_pop() {
   }
   vm.sp--;
   return *vm.sp;
+}
+
+void return_push(cell i) {
+  if (vm.rsp >= vm.return_stack_end) {
+    fprintf(stderr, "Return stack overflow.\n");
+  }
+  *vm.rsp = i;
+  vm.rsp++;
+  return;
+}
+
+cell return_pop() {
+  if (vm.rsp <= vm.return_stack_start) {
+    fprintf(stderr, "Return stack underflow.\n");
+  }
+  vm.rsp--;
+  return *vm.rsp;
 }
 
 /************** Misc. Utils ***************/
